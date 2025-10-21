@@ -218,7 +218,7 @@ What's wrong with the `lateStatement` assignment and how would you fix it?
 
 #### Briefly Give Answers to the Discussion Questions In This Section
 
-> Replace this with your answers to the discussion questions
+Adam's answers will be here.
 
 ### 2. Subset: Querying Rows and Filtering Columns
 
