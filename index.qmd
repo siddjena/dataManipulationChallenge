@@ -3,7 +3,6 @@ title: "Data Manipulation Challenge"
 subtitle: "A Mental Model for Method Chaining in Pandas"
 format:
   html: default
-  pdf: default
 execute:
   echo: true
   eval: true
@@ -112,13 +111,13 @@ from datetime import datetime, timedelta
 
 # Load the shipment data
 shipments_df = pd.read_csv(
-    "https://raw.githubusercontent.com/flyaflya/persuasive/main/shipments.csv", 
+    "shipments.csv", 
     parse_dates=['plannedShipDate', 'actualShipDate']
 )
 
 # Load product line data
 product_line_df = pd.read_csv(
-    "https://raw.githubusercontent.com/flyaflya/persuasive/main/productLine.csv"
+    "productLine.csv"
 )
 
 # Reduce dataset size for faster processing (4,000 rows instead of 96,805 rows)
