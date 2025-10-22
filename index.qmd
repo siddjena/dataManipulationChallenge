@@ -216,9 +216,40 @@ What's wrong with the `lateStatement` assignment and how would you fix it?
 :::
 
 #### Briefly Give Answers to the Discussion Questions In This Section
+::: {.callout-tip}
+## Sid's answers will be here.
+**Answer 1: Data Types and Date Handling**
+The dtype of the actualShipDate series is datetime64[ns].
+This can be found by using the .dtype method on the actualShipDate column.
+```{python}
+print("The dtype of the actualShipDate series is:", shipments_df['actualShipDate'].dtype)
+```
 
-Adam's answers will be here.
+**Answer 2: String vs Date Comparison**
+Comparing dates as strings can lead to errors.
+This happens because strings are compared lexicographically (character by character), while date objects are compared chronologically.
+Specifically, "20" comes before "21" in lexicographic order.
 
+```{python}
+print("Comparing '10-21-2024' and '10-20-2025' as strings, which is false, but returned", "10-21-2024" > "10-20-2025")
+print("Comparing '10-21-2024' and '10-20-2025' as dates, False is correct and returned:", pd.to_datetime("10-21-2024") > pd.to_datetime("10-20-2025"))
+
+```
+**Answer 3: Debug This Code**
+The error occurs because the lambda inside .assign() isn't vectorized and won't work with conditional statements like if/else. We can't directly use a conditional statement like that in a vectorized assignment.
+
+To fix it, we should use .map() to create a new column with the lateStatement values and use lambda df: to reference the current dataframe.
+```{python}
+shipments_with_lateness = (
+    shipments_df
+    .assign(
+        is_late=lambda df: df['actualShipDate'] > df['plannedShipDate'],
+        days_late=lambda df: (df['actualShipDate'] - df['plannedShipDate']).dt.days,
+         lateStatement=lambda df: df['is_late'].map({True: "Darn Shipment is Late", False: "Shipment is on Time"})
+    )
+)
+```
+:::
 ### 2. Subset: Querying Rows and Filtering Columns
 
 **Mental Model:** Query rows based on conditions and filter to keep specific columns.
