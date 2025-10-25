@@ -217,7 +217,7 @@ What's wrong with the `lateStatement` assignment and how would you fix it?
 
 #### Briefly Give Answers to the Discussion Questions In This Section
 ::: {.callout-tip}
-## Sid's answers will be here.
+## Section 1 Answers:
 **Answer 1: Data Types and Date Handling**
 The dtype of the actualShipDate series is datetime64[ns].
 This can be found by using the .dtype method on the actualShipDate column.
@@ -293,7 +293,21 @@ print(late_shipments.head())
 
 #### Briefly Give Answers to the Discussion Questions In This Section
 
-> Replace this with your answers to the discussion questions
+::: {.callout-tip} 
+## Section 2 Answers:
+**Answer 1: Query vs Boolean Indexing**
+The difference is that .query() allows you to filter data with a SQL-like syntax, whereas boolean indexing uses logical conditions directly on the dataframe.
+.query() is more readable and easier to understand due to its SQL-like syntax, especially for complex queries.
+
+**Answer 2: Additional Row Querying**
+You can use a variable like `late_threshold` to query rows for shipments that are at least `late_threshold` days late.
+For example, if you wanted to query rows for shipments that are at least 5 days late, you could use the following code:
+```{python}
+late_shipments = shipments_with_lateness.query('days_late >= 5')
+print(late_shipments.head())
+print(f"Found {len(late_shipments)} late shipments out of {len(shipments_with_lateness)} total")
+```
+:::
 
 ### 3. Drop: Removing Unwanted Data
 
@@ -331,7 +345,18 @@ print("Remaining columns:", clean_shipments.columns.tolist())
 
 #### Briefly Give Answers to the Discussion Questions In This Section
 
-> Replace this with your answers to the discussion questions
+::: {.callout-tip}
+## Section 3 Answers:
+
+**Answer 1: Drop vs Filter Strategies**
+The difference between `.drop(columns=['quantity'])` and `.filter()` with a list of columns you want to keep is that `.drop(columns=['quantity'])` removes the quantity column from the dataframe, while `.filter()` keeps the quantity column in the dataframe.
+You would choose to drop columns if you don't need them for your analysis, and filter columns if you need to keep them for your analysis and use the filter() method to keep the columns you need.
+
+**Answer 2: Handling Missing Data**
+If we use `.dropna()` without specifying `subset`, it will remove any rows that have missing values in any column.
+This is different from `.dropna(subset=['plannedShipDate', 'actualShipDate'])` because it will only remove rows that have missing values in the plannedShipDate or actualShipDate columns.
+We would want to be selective about which columns to check for missing values if we have a lot of columns and only a few of them are missing values and we don't want to lose too much data.
+:::
 
 ### 4. Sort: Arranging Data
 
@@ -369,8 +394,25 @@ print(sorted_by_lateness[['shipID', 'partID', 'days_late', 'is_late']].head(10))
 
 #### Briefly Give Answers to the Discussion Questions In This Section
 
-> Replace this with your answers to the discussion questions
+::: {.callout-tip}
+## Section 4 Answers:
 
+**Answer 1: Sorting Strategies**
+The difference between `ascending=False` and `ascending=True` in sorting is that `ascending=False` sorts the data in descending order, while `ascending=True` sorts the data in ascending order.
+You would use `ascending=False` if you want to sort the data from highest to lowest, and `ascending=True` if you want to sort the data from lowest to highest.
+To sort by multiple columns, we can use the `by` parameter with a list of columns. Below code sorts the data by `is_late` first, then by `days_late`.
+```{python}
+sorted_by_lateness = clean_shipments.sort_values(by=['is_late', 'days_late'], ascending=[False, True])
+print(sorted_by_lateness.head(10))
+```
+
+**Answer 2: Index Management**
+- We use `.reset_index(drop=True)` after sorting to reset the index of the dataframe to be sequential (0, 1, 2, 3...).
+After sorting, the index becomes non-sequential (e.g., rows might have index values like 150, 23, 489, 7...), which can be confusing when trying to access rows by position using `.iloc`.
+The `drop=True` parameter tells pandas to drop the old index (not keep it as a column). reset_index(drop=True) → reassigns fresh 0-based indices and discards the old ones.
+- When you sort a DataFrame, the rows are reordered but keep their original index values, making the index non-sequential.
+This can be confusing or problematic when accessing rows by position or aligning DataFrames.
+:::
 ### 5. Aggregate: Summarizing Data
 
 **Mental Model:** Calculate summary statistics across groups or the entire dataset.
@@ -409,7 +451,12 @@ print(f"\nOn-time delivery rate: {on_time_rate:.1f}%")
 
 #### Briefly Give Answers to the Discussion Questions In This Section
 
-> Replace this with your answers to the discussion questions
+::: {.callout-tip}
+## Section 5 Answers:
+**Answer 1: Boolean Aggregation**
+The `sum()` function works on boolean values because it counts the number of True values in the series.
+For example, if we have a series of boolean values [True, False, True, True, False], the sum() function will return 3 because there are 3 True values.
+:::
 
 ### 6. Merge: Combining Information
 
@@ -448,8 +495,23 @@ print(shipments_with_category['prodCategory'].value_counts())
 
 #### Briefly Give Answers to the Discussion Questions In This Section
 
-> Replace this with your answers to the discussion questions
+::: {.callout-tip}
+## Section 6 Answers:      
 
+**Answer 1: Join Types and Data Loss**
+We use how='left' because it keeps all rows from the left DataFrame (shipments_df) even if some don’t have a match in the right DataFrame (product_line_df).
+This ensures that no shipments are lost due to missing product information.
+To check if any shipments were lost, we can compare the row counts before and after the merge, or check for missing values in the joined columns. If the row counts are the same, no shipments were lost during the merge.
+```{python}
+print(f"Rows before merge: {len(clean_shipments)}")
+print(f"Rows after merge: {len(shipments_with_category)}")
+print(f"Rows lost: {len(clean_shipments) - len(shipments_with_category)}")
+```
+
+**Answer 2: Key Column Matching**
+If there are duplicate partID values in product_line_df, the merge creates a one-to-many relationship — meaning the matching shipment rows will be duplicated for each matching partID in product_line_df.
+So instead of losing data, you may end up with extra rows in the merged DataFrame.
+:::
 ### 7. Split-Apply-Combine: Group Analysis
 
 **Mental Model:** Group data and apply functions within each group.
@@ -488,8 +550,20 @@ print(service_by_category)
 
 #### Briefly Give Answers to the Discussion Questions In This Section
 
-> Replace this with your answers to the discussion questions
+::: {.callout-tip}
+## Section 7 Answers:
 
+**Answer 1: GroupBy Mechanics**
+The .groupby('prodCategory') splits the DataFrame into separate groups based on each unique value in the prodCategory column.
+Each group contains only the rows that share the same prodCategory, allowing you to perform calculations or summaries within each category independently.
+We use .agg() after grouping to apply aggregation functions (like sum, mean, or count) to each group and produce a summarized result.
+If you don’t use .agg() (or another aggregation method like .mean()), you’ll just have a GroupBy object, not a summarized DataFrame — meaning no calculations are actually performed yet.
+
+
+**Answer 2: Multi-Level Grouping**
+Grouping by ['shipID', 'prodCategory'] answers the question of which categories are late for each shipment.
+Grouping by 'prodCategory' alone answers the question of which categories are late overall.
+:::
 ## Answering A Business Question
 
 **Mental Model:** Combine multiple data manipulation techniques to answer complex business questions.
@@ -532,7 +606,62 @@ print(f"Percentage with multiple categories: {multi_category_shipments['shipID']
 
 #### Briefly Give Answers to the Discussion Questions In This Section
 
-> Replace this with your answers to the discussion questions
+::: {.callout-tip}
+## Section 8 Answers:
+**Answer 1: Business Question Analysis**
+- This comprehensive analysis answers the question of which shipments contain multiple product categories and how late those shipments are, helping identify patterns of delay across different product types.
+
+- Grouping by ['shipID', 'prodCategory'] shows which categories are late within each shipment, while grouping by 'prodCategory' alone reveals overall lateness trends across all shipments.
+
+- Knowing the percentage of multi-category shipments helps ZappTech’s management understand how often complex, mixed-category orders occur — and whether these shipments are more prone to delays — guiding decisions to improve logistics and order processing efficiency.
+
+:::
+
+::: {.callout-tip}
+## Visualization showing service level by product category.
+
+```{python}
+#| label: mental-model-8-visualization
+#| echo: true
+
+# Create a visualization showing service level by product category
+# First, we need to flatten the MultiIndex columns for easier plotting
+from matplotlib.ticker import PercentFormatter
+
+# Create a visualization showing service level by product category
+# First, flatten the MultiIndex columns for easier plotting
+service_by_category_flat = service_by_category.copy()
+service_by_category_flat.columns = ['_'.join(col).strip() for col in service_by_category.columns.values]
+
+# Create a simple dataframe with just what we need for visualization
+viz_data = pd.DataFrame({
+    'prodCategory': service_by_category_flat.index,
+    'service_level': 1 - service_by_category_flat['is_late_mean']  # Convert to higher=better
+})
+
+# Create the bar chart
+plt.figure(figsize=(10, 6))
+bars = plt.bar(viz_data['prodCategory'], viz_data['service_level'], color='steelblue')
+
+# Add value labels on bars
+for bar in bars:
+    height = bar.get_height()
+    plt.text(bar.get_x() + bar.get_width()/2, height + 0.01, f"{height:.0%}", ha='center', fontsize=10)
+
+plt.title('Service Level by Product Category', fontsize=16, fontweight='bold')
+plt.xlabel('Product Category', fontsize=12)
+plt.ylabel('Service Level', fontsize=12)
+plt.xticks(rotation=45, ha='right')
+plt.grid(axis='y', alpha=0.3)
+plt.gca().yaxis.set_major_formatter(PercentFormatter(1.0))
+plt.tight_layout()
+plt.show()
+
+# Print the data being visualized
+print("\nData used for visualization:")
+print(viz_data)
+```
+:::
 
 ## Student Analysis Section: Mastering Data Manipulation {#student-analysis-section}
 
