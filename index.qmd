@@ -640,8 +640,8 @@ viz_data = pd.DataFrame({
 })
 
 # Create the bar chart
-plt.figure(figsize=(10, 6))
-bars = plt.bar(viz_data['prodCategory'], viz_data['service_level'], color='steelblue')
+plt.figure(figsize=(8, 6))
+bars = plt.bar(viz_data['prodCategory'], viz_data['service_level'], color='steelblue',width=0.5)
 
 # Add value labels on bars
 for bar in bars:
