@@ -380,14 +380,14 @@ First few rows of product line data:
 </div>
 <div class="callout-body-container callout-body">
 <p><strong>Answer 1: Data Types and Date Handling</strong> The dtype of the actualShipDate series is datetime64[ns]. This can be found by using the .dtype method on the actualShipDate column.</p>
-<div id="2e7c874d" class="cell" data-execution_count="3">
+<div id="e6d50db5" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"The dtype of the actualShipDate series is:"</span>, shipments_df[<span class="st">'actualShipDate'</span>].dtype)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>The dtype of the actualShipDate series is: datetime64[ns]</code></pre>
 </div>
 </div>
 <p><strong>Answer 2: String vs Date Comparison</strong> Comparing dates as strings can lead to errors. This happens because strings are compared lexicographically (character by character), while date objects are compared chronologically. Specifically, “20” comes before “21” in lexicographic order.</p>
-<div id="d0b178b0" class="cell" data-execution_count="4">
+<div id="fa4a15a4" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Comparing '10-21-2024' and '10-20-2025' as strings, which is false, but returned"</span>, <span class="st">"10-21-2024"</span> <span class="op">&gt;</span> <span class="st">"10-20-2025"</span>)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Comparing '10-21-2024' and '10-20-2025' as dates, False is correct and returned:"</span>, pd.to_datetime(<span class="st">"10-21-2024"</span>) <span class="op">&gt;</span> pd.to_datetime(<span class="st">"10-20-2025"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -397,7 +397,7 @@ Comparing '10-21-2024' and '10-20-2025' as dates, False is correct and returned:
 </div>
 <p><strong>Answer 3: Debug This Code</strong> The error occurs because the lambda inside .assign() isn’t vectorized and won’t work with conditional statements like if/else. We can’t directly use a conditional statement like that in a vectorized assignment.</p>
 <p>To fix it, we should use .map() to create a new column with the lateStatement values and use lambda df: to reference the current dataframe.</p>
-<div id="f1342089" class="cell" data-execution_count="5">
+<div id="6bc94f75" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>shipments_with_lateness <span class="op">=</span> (</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    shipments_df</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    .assign(</span>
@@ -483,7 +483,7 @@ Late shipments sample:
 <div class="callout-body-container callout-body">
 <p><strong>Answer 1: Query vs Boolean Indexing</strong> The difference is that .query() allows you to filter data with a SQL-like syntax, whereas boolean indexing uses logical conditions directly on the dataframe. .query() is more readable and easier to understand due to its SQL-like syntax, especially for complex queries.</p>
 <p><strong>Answer 2: Additional Row Querying</strong> You can use a variable like <code>late_threshold</code> to query rows for shipments that are at least <code>late_threshold</code> days late. For example, if you wanted to query rows for shipments that are at least 5 days late, you could use the following code:</p>
-<div id="d6b14784" class="cell" data-execution_count="7">
+<div id="17ca1df4" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>late_shipments <span class="op">=</span> shipments_with_lateness.query(<span class="st">'days_late &gt;= 5'</span>)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(late_shipments.head())</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Found </span><span class="sc">{</span><span class="bu">len</span>(late_shipments)<span class="sc">}</span><span class="ss"> late shipments out of </span><span class="sc">{</span><span class="bu">len</span>(shipments_with_lateness)<span class="sc">}</span><span class="ss"> total"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -615,7 +615,7 @@ Remaining columns: ['shipID', 'plannedShipDate', 'actualShipDate', 'partID', 'is
 </div>
 <div class="callout-body-container callout-body">
 <p><strong>Answer 1: Sorting Strategies</strong> The difference between <code>ascending=False</code> and <code>ascending=True</code> in sorting is that <code>ascending=False</code> sorts the data in descending order, while <code>ascending=True</code> sorts the data in ascending order. You would use <code>ascending=False</code> if you want to sort the data from highest to lowest, and <code>ascending=True</code> if you want to sort the data from lowest to highest. To sort by multiple columns, we can use the <code>by</code> parameter with a list of columns. Below code sorts the data by <code>is_late</code> first, then by <code>days_late</code>.</p>
-<div id="33e9bb88" class="cell" data-execution_count="10">
+<div id="93022c24" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>sorted_by_lateness <span class="op">=</span> clean_shipments.sort_values(by<span class="op">=</span>[<span class="st">'is_late'</span>, <span class="st">'days_late'</span>], ascending<span class="op">=</span>[<span class="va">False</span>, <span class="va">True</span>])</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(sorted_by_lateness.head(<span class="dv">10</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -765,7 +765,7 @@ Name: count, dtype: int64</code></pre>
 </div>
 <div class="callout-body-container callout-body">
 <p><strong>Answer 1: Join Types and Data Loss</strong> We use how=‘left’ because it keeps all rows from the left DataFrame (shipments_df) even if some don’t have a match in the right DataFrame (product_line_df). This ensures that no shipments are lost due to missing product information. To check if any shipments were lost, we can compare the row counts before and after the merge, or check for missing values in the joined columns. If the row counts are the same, no shipments were lost during the merge.</p>
-<div id="f99ac573" class="cell" data-execution_count="13">
+<div id="4e04ff69" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Rows before merge: </span><span class="sc">{</span><span class="bu">len</span>(clean_shipments)<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Rows after merge: </span><span class="sc">{</span><span class="bu">len</span>(shipments_with_category)<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Rows lost: </span><span class="sc">{</span><span class="bu">len</span>(clean_shipments) <span class="op">-</span> <span class="bu">len</span>(shipments_with_category)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
